@@ -1,10 +1,11 @@
-module Ball exposing (view, update, Model, init, subscriptions)
+module Ball exposing (view, update, Model, init, subscriptions, Msg)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Time exposing (..)
 import Window
 import Task
+import Util exposing (..)
 
 type alias Position =
     (Float, Float)
@@ -36,12 +37,12 @@ type Msg = Run
 
 getScreenDim : Cmd Msg
 getScreenDim =
-    Task.perform (\x -> FakeFail) Screen Window.size
+    Task.perform Screen Screen Window.size
 
 subscriptions : Model -> Sub Msg
 subscriptions {moveable, initialized} =
     if moveable && initialized then
-        every (1000 / 60) Tick
+        clock Tick
     else
         Sub.none
 
@@ -56,10 +57,6 @@ init =
     , screen = Window.Size 0 0
     , ball = {w = 20, h = 20}
     }, getScreenDim)
-
-px : Float -> String
-px unit =
-    toString unit ++ "px"
 
 getVelocity : Int -> Float
 getVelocity bounces =
