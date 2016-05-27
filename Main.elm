@@ -26,10 +26,10 @@ init : (Model, Cmd Msg)
 init =
     let
         (deck1M, deck1C) = Decker.init {
-            up = 'w', down = 's'
+            up = 87, down = 83
         } True
         (deck2M, deck2C) = Decker.init {
-            up = 'i', down = 'k'
+            up = 73, down = 75
         } False
         (ballM, ballC) = Ball.init
 

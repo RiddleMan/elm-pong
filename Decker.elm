@@ -6,9 +6,7 @@ import Window
 import Task
 import Util exposing (..)
 import Keyboard exposing (..)
-import Char
 import Time exposing (Time)
-import Debug exposing (..)
 
 type Direction =
     Up
@@ -39,8 +37,8 @@ type alias Model =
     }
 
 type alias Controls =
-    { up: Char
-    , down: Char
+    { up: KeyCode
+    , down: KeyCode
     }
 
 getScreenDim : Cmd Msg
@@ -55,8 +53,8 @@ init { up, down } d =
     , velocity = 5
     , initialized = False
     , moveable = True
-    , upKey = Char.toCode up
-    , downKey = Char.toCode down
+    , upKey = up
+    , downKey = down
     , moving = Nothing
     , direction = d
     }, getScreenDim)
@@ -104,7 +102,7 @@ update msg model =
             ({ model | moveable = False }, Cmd.none)
 
         MoveStart code ->
-            ({ model | moving = keyCodeToMoving code model }, Cmd.none)
+            (updateMove { model | moving = keyCodeToMoving code model }, Cmd.none)
         MoveEnd code ->
             ({ model | moving = Nothing }, Cmd.none)
 
@@ -114,7 +112,7 @@ update msg model =
             ({ model | screen = height, initialized = True }, Cmd.none)
 
 subscriptions : Model -> Sub Msg
-subscriptions { moveable, initialized, upKey, downKey} =
+subscriptions { moveable, initialized } =
     if moveable && initialized
         then Sub.batch [
             clock Tick,
@@ -131,7 +129,7 @@ view { position, height, direction } =
             ("width", px 10),
             ("height", px (toFloat height)),
             ("position", "absolute"),
-            ("top", px 40),
+            ("top", px position),
             case direction of
                 True ->
                     ("left", "0")
